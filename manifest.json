@@ -1,0 +1,39 @@
+{
+	"background": {
+		"scripts": ["background.js"],
+		"persistent": false
+	},
+	"name": "Getting started",
+	"version": "0.0.1",
+	"version_name": "v0.0.1 testing",
+	"description": "My first extension",
+	"manifest_version": 2,
+	"browser_action": {
+		"default_popup": "hello.html",
+		"default_tile": "Hello world example"
+	},
+	"icons": {
+		"16": "hello_extensions.png"
+	},
+	"commands": {
+		"_execute_browser_action": {
+			"suggested_key": {
+				"default": "Ctrl+Shift+F",
+				"mac": "MacCtrl+Shift+F"
+			},
+			"description": "Opens hello.html"
+		},
+		"toggle-feature-foo": {
+			"suggested_key": {
+				"default": "Ctrl+Shift+5",
+				"mac": "MacCtrl+Shift+5"
+			},
+			"description": "Toggle feature foo",
+			"global": false
+		}
+	},
+	"permissions": [
+		"storage",
+		"contextMenus"
+	]
+}

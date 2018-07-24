@@ -42,5 +42,8 @@
 			"run_at": "document_idle",
 			"js": ["content.js"]
 		}
-	]
+	],
+	"options_ui": {
+		"page": "options.html"
+	}
 }

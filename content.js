@@ -6,7 +6,8 @@ function modify_element_after_visibility(el) {
     if ((rect.top >= 0) && (rect.bottom <= window.innerHeight) && (rect.left >= 0) && (rect.right <= window.innerWidth)) {
         el.style.outline = "1px solid green";
     // Partially visible
-    // } else if ((rect.top)) {
+    } else if (((rect.bottom > 0) && (rect.top < window.innerHeight)) && ((rect.right > 0) && (rect.left < window.innerWidth))) {
+        el.style.outline = "1px solid blue";
     // Not at all visible
     } else {
         el.style.outline = "1px solid red";

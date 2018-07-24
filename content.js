@@ -16,6 +16,7 @@ function modify_element_after_visibility(el) {
 
 console.log("Getting all links:");
 
+let start = new Date().getTime();
 let links = document.querySelectorAll("a");
 let links_string = "";
 links.forEach(function(element, index) {
@@ -24,3 +25,5 @@ links.forEach(function(element, index) {
 });
 console.log("Links: " + links_string);
 console.log("Total links received: " + links.length);
+let end = new Date().getTime();
+console.log("Total runtime: " + (end - start).toFixed(5));

@@ -26,19 +26,19 @@ function color_links() {
     console.log("Total links received: " + links.length);
 }
 
-function timed_function_call(fn) {
-    fn_args = [];
-    for (var i = 1; i < arguments.length; i++) {
-        fn_args.push(arguments[i]);
+function timed_decorator(fn) {
+    function timed_call() {
+        let start = new Date().getTime();
+        fn(arguments);
+        let end = new Date().getTime();
+        console.log("Total runtime: " + (end - start).toFixed(5));
     }
-    let start = new Date().getTime();
-    fn(fn_args);
-    let end = new Date().getTime();
-    console.log("Total runtime: " + (end - start).toFixed(5));
+    return timed_call;
 }
 
+let color_links_with_timing = timed_decorator(color_links);
 document.addEventListener("keydown", function make_links_visible(event) {
     if (event.key === "e" && event.ctrlKey && event.altKey) {
-        timed_function_call(color_links);
+        color_links_with_timing();
     }
 });

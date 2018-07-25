@@ -1,4 +1,5 @@
-/*jslint browser: true*/
+/* jslint esversion: 6 */
+/* jslint browser: true*/
 /* global console, chrome */
 
 (function main() {
@@ -31,6 +32,15 @@
             "title": "Sample Context Menu",
             "contexts": ["selection"]
         });
+    });
+
+    chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+        console.log("Getting message: ");
+        console.log(message);
+        console.log("From: ");
+        console.log(sender);
+        let link_count = Number(message.link_count);
+        chrome.browserAction.setBadgeText({"text": "" + link_count});
     });
 
     console.log("background.js has run");

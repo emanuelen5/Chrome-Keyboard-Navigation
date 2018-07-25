@@ -30,6 +30,8 @@ function color_links() {
     });
     console.log("Links: " + links_string);
     console.log("Total links received: " + links.length);
+    chrome.runtime.sendMessage({link_count: links.length});
+    console.log("Sent link count");
 }
 
 function timed_decorator(fn) {

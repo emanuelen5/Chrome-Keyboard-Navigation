@@ -50,3 +50,35 @@ document.addEventListener("keydown", function make_links_visible(event) {
         color_links_with_timing();
     }
 });
+
+
+function absolute_element_overlay(copy_element, to_element=document.body) {
+    let copied_element = copy_element.cloneNode(true);
+    copy_element.style.visibility = "hidden"; // TODO: Restore this in undo function
+
+    copied_element.style.position = 'absolute';
+    function update_coordinates () {
+        // TODO: Use a reference to the original object to find its new position
+        let rect = copy_element.getBoundingClientRect();
+        copied_element.style.left = rect.left + 'px';
+        copied_element.style.top = rect.top + 'px';
+        copied_element.style.width = (rect.width || copied_element.offsetWidth) + 'px';
+    }
+    to_element.appendChild(copied_element);
+
+    copied_element.undo_temp_move = function () {
+        // TODO:
+        // Get the original element and restore its visibility
+        // Remove this element from overlay
+        copied_element.parentNode.removeNode(copied_element);
+        copy_element.style.visibility = "visible";
+    };
+
+    window.addEventListener("resize", function () {
+      update_coordinates();
+    });
+    update_coordinates();
+}
+
+// Make all of the links pop out, but the background dimmed
+absolute_element_overlay(document.querySelector("a"), document.body);

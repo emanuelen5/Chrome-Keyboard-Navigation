@@ -9,3 +9,11 @@
 .kn__outside_frame {
     outline: 1px solid red;
 }
+
+body.dimmed > :not(.undimmed) {
+    opacity: 0.1;
+}
+
+body {
+    background: green;
+}

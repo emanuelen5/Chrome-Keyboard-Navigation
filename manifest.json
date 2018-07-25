@@ -40,7 +40,8 @@
 		{
 			"matches": [ "<all_urls>" ],
 			"run_at": "document_idle",
-			"js": ["content.js"]
+			"js": ["content.js"],
+			"css": ["content.css"]
 		}
 	],
 	"options_ui": {

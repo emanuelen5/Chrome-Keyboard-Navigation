@@ -2,15 +2,21 @@
 
 function color_element_from_position(el) {
     var rect = el.getBoundingClientRect();
+    let classes = el.classList;
+    ["kn__in_frame", "kn__outside_frame", "kn__partially_in_frame"].forEach(function(className) {
+        classes.remove(className);
+    });
     // Completely visible
     if ((rect.top >= 0) && (rect.bottom <= window.innerHeight) && (rect.left >= 0) && (rect.right <= window.innerWidth)) {
-        el.style.outline = "1px solid green";
+       classes.add("kn__in_frame"); 
     // Partially visible
     } else if (((rect.bottom > 0) && (rect.top < window.innerHeight)) && ((rect.right > 0) && (rect.left < window.innerWidth))) {
-        el.style.outline = "1px solid blue";
+       classes.add("kn__partially_in_frame"); 
+    // Partially visible
     // Not at all visible
     } else {
-        el.style.outline = "1px solid red";
+       classes.add("kn__outside_frame"); 
+    // Partially visible
     }
 }
 

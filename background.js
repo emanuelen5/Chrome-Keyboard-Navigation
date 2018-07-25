@@ -6,9 +6,7 @@
     'use strict';
 
     console.log("background.js is running");
-    chrome.browserAction.setBadgeText({"text": "Yolo"}, function () {
-        console.log("The callback is run!");
-    });
+
     chrome.browserAction.getBadgeText({}, function (result) {
         console.log("The callback is run! Badge text: '" + result + "'");
     });
@@ -40,7 +38,7 @@
         console.log("From: ");
         console.log(sender);
         let link_count = Number(message.link_count);
-        chrome.browserAction.setBadgeText({"text": "" + link_count});
+        chrome.browserAction.setBadgeText({"text": "" + link_count, "tabId": sender.tab.id});
     });
 
     console.log("background.js has run");

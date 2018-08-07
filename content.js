@@ -51,6 +51,33 @@ document.addEventListener("keydown", function make_links_visible(event) {
     }
 });
 
+class Overlay {
+    constructor (copy_element, copied_element) {
+        this.copy_element = copy_element;
+        this.copied_element = copied_element;
+    }
+
+    destroy () {
+        this.copied_element.parentNode.removeChild(this.copied_element);
+        this.copy_element.style.visibility = "visible";
+    }
+}
+
+class OverlayList {
+    constructor () {
+        this.list = [];
+    }
+
+    push (copy_element, copied_element) {
+        this.list.push(new Overlay(copy_element, copied_element));
+    }
+
+    pop () {
+        this.list.pop().destroy();
+    }
+}
+
+var overlay_list = new OverlayList();
 
 function absolute_element_overlay(copy_element, to_element=document.body) {
     let copied_element = copy_element.cloneNode(true);
@@ -64,20 +91,15 @@ function absolute_element_overlay(copy_element, to_element=document.body) {
         copied_element.style.top = rect.top + 'px';
         copied_element.style.width = (rect.width || copied_element.offsetWidth) + 'px';
     }
-    to_element.appendChild(copied_element);
 
-    copied_element.undo_temp_move = function () {
-        // TODO:
-        // Get the original element and restore its visibility
-        // Remove this element from overlay
-        copied_element.parentNode.removeNode(copied_element);
-        copy_element.style.visibility = "visible";
-    };
+    overlay_list.push(copy_element, copied_element);
 
     window.addEventListener("resize", function () {
       update_coordinates();
     });
     update_coordinates();
+
+    to_element.appendChild(copied_element);
 }
 
 // Make all of the links pop out, but the background dimmed

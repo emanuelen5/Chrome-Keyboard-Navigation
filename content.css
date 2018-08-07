@@ -10,10 +10,6 @@
     outline: 1px solid red;
 }
 
-body.dimmed > :not(.undimmed) {
+div.dimmed {
     opacity: 0.1;
-}
-
-body {
-    background: green;
 }

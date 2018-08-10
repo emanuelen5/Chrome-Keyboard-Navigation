@@ -105,11 +105,10 @@ var overlay_list = new OverlayList();
 
 function absolute_element_overlay(copy_element, to_element=document.body) {
     let copied_element = copy_element.cloneNode(true);
-    copy_element.style.visibility = "hidden"; // TODO: Restore this in undo function
+    copy_element.style.visibility = "hidden";
 
     copied_element.style.position = 'absolute';
     function update_coordinates () {
-        // TODO: Use a reference to the original object to find its new position
         let rect = copy_element.getBoundingClientRect();
         copied_element.style.left = rect.left + 'px';
         copied_element.style.top = rect.top + 'px';
@@ -126,7 +125,7 @@ function absolute_element_overlay(copy_element, to_element=document.body) {
     to_element.appendChild(copied_element);
 }
 
-// Make all of the links pop out, but the background dimmed
+// Demo mode, animate some
 setTimeout(function () {
     absolute_element_overlay(document.querySelector("a"), document.body);
     setTimeout(function () {

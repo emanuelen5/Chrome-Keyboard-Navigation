@@ -84,20 +84,16 @@ class OverlayList {
         }
     }
 
-    pop () {
-        let wasNotEmpty = !this.isEmpty();
-        if (wasNotEmpty) {
-            this.list.pop().destroy();
-        }
-        // Going from not empty to empty
-        if (!wasNotEmpty && this.isEmpty()) {
-            this.overlay.classList.remove("activated");
-        }
-        return wasNotEmpty;
-    }
-
     clear () {
-        while (this.pop());
+        this.overlay.classList.remove("activated");
+        let clear_elements = this.list;
+        this.list = [];
+        // Remove all elements after animation is done
+        setTimeout(function () {
+            for (let i in clear_elements) {
+                clear_elements[i].destroy();
+            }
+        }, 500);
     }
 }
 

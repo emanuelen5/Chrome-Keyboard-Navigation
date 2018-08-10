@@ -73,7 +73,15 @@ class OverlayList {
     }
 
     pop () {
-        this.list.pop().destroy();
+        let isNotEmpty = (this.list.length !== 0);
+        if (isNotEmpty) {
+            this.list.pop().destroy();
+        }
+        return isNotEmpty;
+    }
+
+    clear () {
+        while (this.pop());
     }
 }
 

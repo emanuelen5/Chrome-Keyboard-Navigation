@@ -102,5 +102,18 @@ function absolute_element_overlay(copy_element, to_element=document.body) {
     to_element.appendChild(copied_element);
 }
 
+function add_overlay() {
+    let overlay = document.createElement("kn__overlay");
+    document.body.appendChild(overlay);
+    let cl = overlay.classList;
+    setTimeout(function () {
+        cl.add("activated");
+        setTimeout(function () {
+            cl.remove("activated");
+        }, 1000);
+    }, 1000);
+}
+
 // Make all of the links pop out, but the background dimmed
+add_overlay();
 absolute_element_overlay(document.querySelector("a"), document.body);

@@ -10,6 +10,17 @@
     outline: 1px solid red;
 }
 
-div.dimmed {
-    opacity: 0.1;
+kn__overlay {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: white;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0.0;
+}
+
+kn__overlay.activated {
+    opacity: 0.9
 }

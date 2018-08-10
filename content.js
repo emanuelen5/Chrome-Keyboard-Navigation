@@ -66,18 +66,34 @@ class Overlay {
 class OverlayList {
     constructor () {
         this.list = [];
+        // TODO: Make sure that this is never executed more than once?
+        this.overlay = document.createElement("kn__overlay");
+        document.body.appendChild(this.overlay);
+    }
+
+    isEmpty () {
+        return (this.list.length === 0);
     }
 
     push (copy_element, copied_element) {
+        let wasEmpty = this.isEmpty();
         this.list.push(new Overlay(copy_element, copied_element));
+        // Not being empty any more
+        if (wasEmpty) {
+            this.overlay.classList.add("activated");
+        }
     }
 
     pop () {
-        let isNotEmpty = (this.list.length !== 0);
-        if (isNotEmpty) {
+        let wasNotEmpty = !this.isEmpty();
+        if (wasNotEmpty) {
             this.list.pop().destroy();
         }
-        return isNotEmpty;
+        // Going from not empty to empty
+        if (!wasNotEmpty && this.isEmpty()) {
+            this.overlay.classList.remove("activated");
+        }
+        return wasNotEmpty;
     }
 
     clear () {
@@ -110,18 +126,10 @@ function absolute_element_overlay(copy_element, to_element=document.body) {
     to_element.appendChild(copied_element);
 }
 
-function add_overlay() {
-    let overlay = document.createElement("kn__overlay");
-    document.body.appendChild(overlay);
-    let cl = overlay.classList;
-    setTimeout(function () {
-        cl.add("activated");
-        setTimeout(function () {
-            cl.remove("activated");
-        }, 1000);
-    }, 1000);
-}
-
 // Make all of the links pop out, but the background dimmed
-add_overlay();
-absolute_element_overlay(document.querySelector("a"), document.body);
+setTimeout(function () {
+    absolute_element_overlay(document.querySelector("a"), document.body);
+    setTimeout(function () {
+        overlay_list.clear();
+    }, 1000);
+}, 1000);

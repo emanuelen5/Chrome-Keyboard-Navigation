@@ -130,6 +130,33 @@ function absolute_element_overlay(copy_element, to_element=document.body) {
     to_element.appendChild(copied_element);
 }
 
+class AppState {
+    constructor(name) {
+        this.name = name;
+    }
+}
+
+// Create unique states
+let APP_STATE_IDLE = new AppState("IDLE");
+let APP_STATE_FILTER = new AppState("FILTER");
+let app_state = APP_STATE_IDLE;
+
+document.addEventListener("keydown", function app_state_change(event) {
+    if (app_state === APP_STATE_IDLE) {
+        // Go to search state
+        if (event.key === "f" && event.ctrlKey && event.altKey) {
+            app_state = APP_STATE_FILTER;
+            console.log("Going to filter state");
+        }
+    } else if (app_state === APP_STATE_FILTER) {
+        // Escape key
+        if (event.key === "Escape") {
+            app_state = APP_STATE_IDLE;
+            console.log("Going to idle state");
+        }
+    }
+});
+
 // Demo mode, animate some
 setTimeout(function () {
     absolute_element_overlay(document.getElementById("first_link"), document.body);

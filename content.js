@@ -96,8 +96,20 @@ var overlay_list = new (class OverlayList {
     }
 })();
 
+function strip_attribute(element, attribute="id", clone=true) {
+    let return_element;
+    if (clone) {
+        return_element = element.cloneNode(true);
+    } else {
+        return_element = element;
+    }
+    return_element.removeAttribute(attribute);
+    return_element.querySelectorAll("[" + attribute + "]").forEach(el => {el.removeAttribute(attribute);});
+    return return_element;
+}
+
 function absolute_element_overlay(copy_element, to_element=document.body) {
-    let copied_element = copy_element.cloneNode(true);
+    let copied_element = strip_attribute(copy_element);
     copy_element.style.visibility = "hidden";
 
     copied_element.style.position = 'absolute';
@@ -120,7 +132,7 @@ function absolute_element_overlay(copy_element, to_element=document.body) {
 
 // Demo mode, animate some
 setTimeout(function () {
-    absolute_element_overlay(document.querySelector("a"), document.body);
+    absolute_element_overlay(document.getElementById("first_link"), document.body);
     setTimeout(function () {
         overlay_list.clear();
     }, 1000);

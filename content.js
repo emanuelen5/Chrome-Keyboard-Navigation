@@ -63,10 +63,9 @@ class Overlay {
     }
 }
 
-class OverlayList {
+var overlay_list = new (class OverlayList {
     constructor () {
         this.list = [];
-        // TODO: Make sure that this is never executed more than once?
         this.overlay = document.createElement("kn__overlay");
         document.body.appendChild(this.overlay);
     }
@@ -95,9 +94,7 @@ class OverlayList {
             }
         }, 500);
     }
-}
-
-var overlay_list = new OverlayList();
+})();
 
 function absolute_element_overlay(copy_element, to_element=document.body) {
     let copied_element = copy_element.cloneNode(true);

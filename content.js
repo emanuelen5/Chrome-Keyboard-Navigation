@@ -130,6 +130,21 @@ function absolute_element_overlay(copy_element, to_element=document.body) {
     to_element.appendChild(copied_element);
 }
 
+// From https://stackoverflow.com/a/3561711/4713758
+RegExp.escape= function(s) {
+    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+};
+
+function fuzzy_search(needle, haystack) {
+    let needle_re = RegExp.escape(needle);
+    // Insert wildcard between every character
+    needle_re = needle_re.split("").join(")(.*?)(");
+    needle_re = "(" + needle_re + ")";
+    needle_re = RegExp(needle_re, "gi");
+    // needle_re = "^.*?" + needle_re + ".*?$";
+    return needle_re.exec(haystack);
+}
+
 class AppState {
     constructor(name) {
         this.name = name;
@@ -156,6 +171,9 @@ document.addEventListener("keydown", function app_state_change(event) {
         }
     }
 });
+
+console.log("fuzzy_search(\"has\", \"helas\"):");
+console.log(fuzzy_search("has", "helas"));
 
 // Demo mode, animate some
 setTimeout(function () {

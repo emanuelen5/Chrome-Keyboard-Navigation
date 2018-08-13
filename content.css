@@ -19,8 +19,11 @@ kn__overlay {
     background: white;
     transition: opacity 0.5s ease-in-out;
     opacity: 0.0;
+    pointer-events: none;
 }
 
 kn__overlay.activated {
-    opacity: 0.9
+    transition: opacity 0.25s ease;
+    opacity: 0.9;
+    pointer-events: auto; // No click-through
 }

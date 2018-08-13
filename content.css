@@ -32,3 +32,25 @@ kn__overlay.deactivated {
     transition: opacity 0.25s ease;
     opacity: 0.0;
 }
+
+kn__search_box {
+    width: 70%;
+    min-width: 300px;
+    height: 20%;
+    top: 20%%;
+    left: 15%;
+    background: gray;
+    position: absolute;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0.0;
+}
+
+kn__search_box.activated {
+    transition: opacity 0.25s ease-in-out;
+    opacity: 1;
+}
+
+kn__search_box.deactivated {
+    transition: opacity 0.25s ease-in-out;
+    opacity: 0.0;
+}

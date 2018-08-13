@@ -150,6 +150,35 @@ function fuzzy_search(needle, haystack) {
     return needle_re.exec(haystack);
 }
 
+let search_bar = new (
+    class SearchBar {
+        constructor() {
+            this.is_attached = false;
+            this.overlay = document.createElement("kn__overlay");
+            let search_box = document.createElement("kn__search_box");
+            this.search_box = search_box;
+            document.body.appendChild(this.overlay);
+            document.body.appendChild(this.search_box);
+        }
+
+        attach() {
+            if (!this.is_attached) {
+                this.is_attached = true;
+                this.overlay.classList.add("activated");
+                this.search_box.classList.add("activated");
+            }
+        }
+
+        detach() {
+            if (this.is_attached) {
+                this.is_attached = false;
+                this.overlay.classList.remove("activated");
+                this.search_box.classList.remove("activated");
+            }
+        }
+    }
+)();
+
 class AppState {
     constructor(name) {
         this.name = name;
@@ -166,12 +195,14 @@ document.addEventListener("keydown", function app_state_change(event) {
         // Go to search state
         if (event.key === "f" && event.ctrlKey && event.altKey) {
             app_state = APP_STATE_FILTER;
+            search_bar.attach();
             console.log("Going to filter state");
         }
     } else if (app_state === APP_STATE_FILTER) {
         // Escape key
         if (event.key === "Escape") {
             app_state = APP_STATE_IDLE;
+            search_bar.detach();
             console.log("Going to idle state");
         }
     }

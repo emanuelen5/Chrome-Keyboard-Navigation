@@ -155,6 +155,14 @@ function fuzzy_search(needle, haystack) {
     return needle_re.exec(haystack);
 }
 
+function filter_links(search_text) {
+    for (let link of document.querySelectorAll("a")) {
+        if (fuzzy_search(search_text, link.innerText) !== null) {
+            absolute_element_overlay(link, document.body);
+        }
+    }
+}
+
 let search_bar = new (
     class SearchBar {
         constructor() {
@@ -166,10 +174,8 @@ let search_bar = new (
             input.addEventListener("input", function () {
                 let search_text = this.value;
                 overlay_list.clear();
-                for (let link of document.querySelectorAll("a")) {
-                    if (fuzzy_search(search_text, link.innerText) !== null) {
-                        absolute_element_overlay(link, document.body);
-                    }
+                if (search_text.replace(/ /g, "") !== "") {
+                    filter_links(search_text);
                 }
             });
             this.input = input;
@@ -221,6 +227,8 @@ document.addEventListener("keydown", function app_state_change(event) {
         if (event.key === "Escape") {
             app_state = APP_STATE_IDLE;
             search_bar.detach();
+            overlay_list.clear();
+            search_bar.input.value = "";
             console.log("Going to idle state");
         }
     }

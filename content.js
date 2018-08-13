@@ -156,6 +156,19 @@ let search_bar = new (
             this.is_attached = false;
             this.overlay = document.createElement("kn__overlay");
             let search_box = document.createElement("kn__search_box");
+
+            let input = document.createElement("input");
+            input.addEventListener("input", function () {
+                let search_text = this.value;
+                overlay_list.clear();
+                for (let link of document.querySelectorAll("a")) {
+                    if (fuzzy_search(search_text, link.innerText) !== null) {
+                        absolute_element_overlay(link, document.body);
+                    }
+                }
+            });
+            this.input = input;
+            search_box.appendChild(this.input);
             this.search_box = search_box;
             document.body.appendChild(this.overlay);
             document.body.appendChild(this.search_box);

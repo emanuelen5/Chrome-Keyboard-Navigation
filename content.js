@@ -88,11 +88,16 @@ var overlay_list = new (class OverlayList {
         let clear_elements = this.list;
         this.list = [];
         // Remove all elements after animation is done
-        setTimeout(function () {
-            for (let i in clear_elements) {
-                clear_elements[i].destroy();
-            }
-        }, 500);
+        setTimeout(
+            (
+                function (clear_elements_internal) {
+                    return function () {
+                        for (let i in clear_elements_internal) {
+                            clear_elements_internal[i].destroy();
+                        }
+                    };
+                }
+            )(clear_elements), 500);
     }
 })();
 

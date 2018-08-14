@@ -67,7 +67,7 @@ var overlay_list = new (class OverlayList {
     constructor () {
         this.list = [];
         this.overlay = document.createElement("kn__overlay");
-        document.body.appendChild(this.overlay);
+        // document.body.appendChild(this.overlay);
     }
 
     isEmpty () {

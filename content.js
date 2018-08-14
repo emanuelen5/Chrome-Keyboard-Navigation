@@ -234,13 +234,17 @@ document.addEventListener("keydown", function app_state_change(event) {
     }
 });
 
-console.log("fuzzy_search(\"has\", \"helas\"):");
-console.log(fuzzy_search("has", "helas"));
-
-// Demo mode, animate some
-setTimeout(function () {
-    absolute_element_overlay(document.getElementById("first_link"), document.body);
+function test() {
+    console.log("fuzzy_search(\"has\", \"helas\"):");
+    console.log(fuzzy_search("has", "helas"));
+    
+    // Demo mode, animate some
     setTimeout(function () {
-        overlay_list.clear();
+        absolute_element_overlay(document.getElementById("first_link"), document.body);
+        setTimeout(function () {
+            overlay_list.clear();
+        }, 1000);
     }, 1000);
-}, 1000);
+}
+
+// test();

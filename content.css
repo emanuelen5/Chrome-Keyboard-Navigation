@@ -39,10 +39,15 @@ kn__search_box {
     height: 20%;
     top: 20%%;
     left: 15%;
+    padding: 10px;
     background: gray;
     position: absolute;
     transition: opacity 0.5s ease-in-out;
     opacity: 0.0;
+}
+
+kn__search_box > input {
+    width: 100%;
 }
 
 kn__search_box.activated {

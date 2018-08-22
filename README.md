@@ -1,7 +1,7 @@
 # Chrome keyboard navigation
 
 ## Introduction
-I want to make an extension that makes it simpler to navigate websites without a mouse. Links is the largest problem. The only way to properly select links is to tab until you reach link that you want to enter.
+I want to make an extension that makes it simpler to navigate websites without a mouse. Links are the largest problem. The only way to properly select links is to tab until you reach link that you want to enter.
 
 ## Development
 

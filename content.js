@@ -207,8 +207,10 @@ let search_bar = new (
 
         filter_links(search_text) {
             for (let link of document.querySelectorAll("a")) {
-                if (fuzzy_search(search_text, link.innerText) !== null) {
-                    absolute_element_overlay(link, search_bar.overlay);
+                if (!overlay_list.has_node(link)) {
+                    if (fuzzy_search(search_text, link.innerText) !== null) {
+                        absolute_element_overlay(link, search_bar.overlay);
+                    }
                 }
             }
         }

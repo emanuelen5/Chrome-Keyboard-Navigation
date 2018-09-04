@@ -99,6 +99,18 @@ var overlay_list = new (class OverlayList {
                 }
             )(clear_elements), 500);
     }
+
+    has_node (node) {
+        for (var index = 0; index < this.list.length; index++) {
+            if (this.list[index].copy_element === node) {
+                console.log("equal: " + index);
+                return true;
+            } else {
+                console.log("not equal: " + index);
+            }
+        }
+        return false;
+    }
 })();
 
 function strip_attribute(element, attribute="id", clone=true) {

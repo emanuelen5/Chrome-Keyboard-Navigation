@@ -155,14 +155,6 @@ function fuzzy_search(needle, haystack) {
     return needle_re.exec(haystack);
 }
 
-function filter_links(search_text) {
-    for (let link of document.querySelectorAll("a")) {
-        if (fuzzy_search(search_text, link.innerText) !== null) {
-            absolute_element_overlay(link, document.body);
-        }
-    }
-}
-
 let search_bar = new (
     class SearchBar {
         constructor() {
@@ -175,7 +167,7 @@ let search_bar = new (
                 let search_text = this.value;
                 overlay_list.clear();
                 if (search_text.replace(/ /g, "") !== "") {
-                    filter_links(search_text);
+                    search_bar.filter_links(search_text);
                 }
             });
             this.input = input;
@@ -198,6 +190,14 @@ let search_bar = new (
                 this.is_attached = false;
                 this.overlay.classList.remove("activated");
                 this.search_box.classList.remove("activated");
+            }
+        }
+
+        filter_links(search_text) {
+            for (let link of document.querySelectorAll("a")) {
+                if (fuzzy_search(search_text, link.innerText) !== null) {
+                    absolute_element_overlay(link, document.body);
+                }
             }
         }
     }

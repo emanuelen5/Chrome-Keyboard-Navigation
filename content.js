@@ -196,7 +196,7 @@ let search_bar = new (
         filter_links(search_text) {
             for (let link of document.querySelectorAll("a")) {
                 if (fuzzy_search(search_text, link.innerText) !== null) {
-                    absolute_element_overlay(link, document.body);
+                    absolute_element_overlay(link, search_bar.overlay);
                 }
             }
         }

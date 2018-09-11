@@ -1,24 +1,27 @@
 {
-	"name": "keyboard-navigation",
-	"version": "0.0.1",
-	"browser": "testpage.html",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/emanuelen5/Chrome-Keyboard-Navigation.git"
-	},
-	"keywords": [
-		"chrome",
-		"keyboard",
-		"alfred"
-	],
-	"author": "Erasmus Cedernaes",
-	"bugs": {
-		"url": "https://github.com/emanuelen5/Chrome-Keyboard-Navigation/issues"
-	},
-	"homepage": "https://github.com/emanuelen5/Chrome-Keyboard-Navigation#readme",
-	"license": "UNLICENSED",
-	"private": true
+  "name": "keyboard-navigation",
+  "version": "0.0.1",
+  "browser": "testpage.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emanuelen5/Chrome-Keyboard-Navigation.git"
+  },
+  "keywords": [
+    "chrome",
+    "keyboard",
+    "alfred"
+  ],
+  "author": "Erasmus Cedernaes",
+  "bugs": {
+    "url": "https://github.com/emanuelen5/Chrome-Keyboard-Navigation/issues"
+  },
+  "homepage": "https://github.com/emanuelen5/Chrome-Keyboard-Navigation#readme",
+  "license": "UNLICENSED",
+  "private": true,
+  "devDependencies": {
+    "sinon-chrome": "^2.3.2"
+  }
 }

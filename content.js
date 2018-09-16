@@ -12,11 +12,9 @@ function color_element_from_position(el) {
     // Partially visible
     } else if (((rect.bottom > 0) && (rect.top < window.innerHeight)) && ((rect.right > 0) && (rect.left < window.innerWidth))) {
        classes.add("kn__partially_in_frame");
-    // Partially visible
     // Not at all visible
     } else {
        classes.add("kn__outside_frame");
-    // Partially visible
     }
 }
 

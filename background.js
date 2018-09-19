@@ -1,6 +1,4 @@
-/* jslint esversion: 6 */
-/* jslint browser: true*/
-/* global console, chrome */
+/* global chrome */
 
 (function main() {
     'use strict';
@@ -15,9 +13,9 @@
     });
 
     chrome.runtime.onInstalled.addListener(function () {
-      chrome.storage.sync.set({color: '#3aa757'}, function() {
-        console.log("The color is green.");
-      });
+        chrome.storage.sync.set({color: '#3aa757'}, function() {
+            console.log("The color is green.");
+        });
     });
 
     chrome.commands.onCommand.addListener(function (command) {

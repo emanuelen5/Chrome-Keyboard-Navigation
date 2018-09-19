@@ -1,4 +1,4 @@
-/* jslint esversion: 6 */
+/* global chrome */
 
 function color_element_from_position(el) {
     var rect = el.getBoundingClientRect();
@@ -8,13 +8,13 @@ function color_element_from_position(el) {
     });
     // Completely visible
     if ((rect.top >= 0) && (rect.bottom <= window.innerHeight) && (rect.left >= 0) && (rect.right <= window.innerWidth)) {
-       classes.add("kn__in_frame");
+        classes.add("kn__in_frame");
     // Partially visible
     } else if (((rect.bottom > 0) && (rect.top < window.innerHeight)) && ((rect.right > 0) && (rect.left < window.innerWidth))) {
-       classes.add("kn__partially_in_frame");
+        classes.add("kn__partially_in_frame");
     // Not at all visible
     } else {
-       classes.add("kn__outside_frame");
+        classes.add("kn__outside_frame");
     }
 }
 
@@ -138,7 +138,7 @@ function absolute_element_overlay(copy_element, to_element=document.body) {
     overlay_list.push(copy_element, copied_element);
 
     window.addEventListener("resize", function () {
-      update_coordinates();
+        update_coordinates();
     });
     update_coordinates();
 
@@ -147,7 +147,7 @@ function absolute_element_overlay(copy_element, to_element=document.body) {
 
 // From https://stackoverflow.com/a/3561711/4713758
 RegExp.escape= function(s) {
-    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 };
 
 /**

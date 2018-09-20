@@ -1,0 +1,17 @@
+env:
+  browser: false
+  es6: true
+  node: true
+  mocha: true
+extends: 'eslint:recommended'
+parserOptions:
+  ecmaVersion: 2018
+  sourceType: module
+plugins:
+  - chai-expect
+  - mocha
+rules:
+  mocha/no-exclusive-tests: error
+  chai-expect/no-inner-compare: error
+  chai-expect/missing-assertion: error
+  chai-expect/terminating-properties: error

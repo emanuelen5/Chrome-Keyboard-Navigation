@@ -145,11 +145,6 @@ function absolute_element_overlay(copy_element, to_element=document.body) {
     to_element.appendChild(copied_element);
 }
 
-// From https://stackoverflow.com/a/3561711/4713758
-RegExp.escape= function(s) {
-    return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-};
-
 let search_bar = new (
     class SearchBar {
         constructor() {

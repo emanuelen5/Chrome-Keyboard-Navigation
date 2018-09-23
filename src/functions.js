@@ -1,4 +1,13 @@
 /**
+ * Escapes a Regex (https://stackoverflow.com/a/3561711/4713758)
+ * @param  {string} s String to escape as literal regex
+ * @return {string}   Escaped string
+ */
+RegExp.escape= function(s) {
+    return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+};
+
+/**
  * Perform a fuzzy search for a literal string.
  * @param  {str} needle   Literal string to search for
  * @param  {str} haystack String to search in

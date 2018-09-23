@@ -40,7 +40,7 @@
 		{
 			"matches": [ "file:///*/testpage.html" ],
 			"run_at": "document_idle",
-			"js": ["content.js"],
+			"js": ["src/functions.js", "content.js"],
 			"css": ["content.css"]
 		}
 	],

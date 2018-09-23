@@ -99,9 +99,9 @@ describe('get_fuzzy_search_string', function() {
 });
 
 describe('to_escaped_char_array', function() {
-    it('is motivated to write a special function for this', function() {
+    it('is a precondition for string.split("") to produce one character for each backslash', function() {
         const string = "\\";
-        assert.notEqual(string.split("").length, string.length);
+        assert.equal(string.split("").length, string.length);
     });
 
     it('should not split escaped backslashes', function() {

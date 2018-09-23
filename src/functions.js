@@ -7,36 +7,18 @@ RegExp.escape= function(s) {
     return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 };
 
-// Array Remove - By John Resig (MIT Licensed)
-Array.prototype.remove = function(from, to) {
-    var rest = this.slice((to || from) + 1 || this.length);
-    this.length = from < 0 ? this.length + from : from;
-    return this.push.apply(this, rest);
-};
-
 function to_escaped_char_array(string) {
     let escaped_char_array = string.split("");
-    let last_was_backslash = false;
-    for (var i = escaped_char_array.length-1; i >= 0; i--) {
-        if (last_was_backslash) {
-            escaped_char_array.remove(i);
-            last_was_backslash = false;
-            continue;
-        } else if (escaped_char_array[i] === "\\") {
-            escaped_char_array[i] = RegExp.escape(escaped_char_array[i]);
-            last_was_backslash = true;
-        } else {
-            escaped_char_array[i] = RegExp.escape(escaped_char_array[i]);
-        }
+    for (var i = 0; i < escaped_char_array.length; i++) {
+        escaped_char_array[i] = RegExp.escape(escaped_char_array[i]);
     }
     return escaped_char_array;
 }
 
 function get_fuzzy_search_string(needle) {
-    let needle_re = RegExp.escape(needle);
     // Insert wildcard between every character
-    let escaped_char_array = to_escaped_char_array(needle_re);
-    needle_re = escaped_char_array.join(")(.*?)(");
+    let escaped_char_array = to_escaped_char_array(needle);
+    let needle_re = escaped_char_array.join(")(.*?)(");
     needle_re = "(" + needle_re + ")";
     return needle_re;
 }

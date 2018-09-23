@@ -61,11 +61,11 @@ describe('fuzzy_search', function() {
     });
 
     it('should match escaped strings', function() {
-        search_string = "\\scan match as well\\s";
-        let search_result = fuzzy_search("\\s\\s", search_string);
+        search_string = "\\can match as well\\";
+        let search_result = fuzzy_search("\\\\", search_string);
         assert.deepEqual(
             search_result,
-            [search_string, '\\s', 'can match as well', '\\s']
+            [search_string, '\\', 'can match as well', '\\']
         );
     });
 });

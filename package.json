@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "browser": "testpage.html",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "test-js": "mocha test/functions.js"
   },
   "repository": {
     "type": "git",

@@ -5,7 +5,7 @@ const pptr = require('puppeteer');
 describe('Dummy', function() {
     it('should always pass', function() {
         assert.equal(true, true);
-        expect(true).equal(true);
+        expect(true).to.equal(true);
     });
 });
 

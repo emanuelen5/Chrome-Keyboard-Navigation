@@ -13,6 +13,17 @@ describe('fuzzy search', function() {
         assert.deepEqual([search_string, "h", "", "e", "ee", "j"], search_result);
     });
 
+    it('first index should be total match', function() {
+        let search_result = fuzzy_search("hej", search_string);
+        let combined_strings = search_result.slice(1).join('');
+        assert.equal(search_result[0], combined_strings);
+    });
+
+    it('should find first letters of word', function() {
+        let search_result = fuzzy_search("he", search_string);
+        assert.deepEqual(["he", "h", "", "e"], search_result);
+    });
+
     it('should find letter', function() {
         let search_result = fuzzy_search("h", search_string);
         assert.deepEqual(["h", "h"], search_result);

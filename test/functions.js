@@ -3,7 +3,7 @@ const assert = require('chai').assert;
 const fs = require('fs');
 // Include the script in the global scope (not using 'module' to be compatible with client-side js)
 eval(fs.readFileSync('src/functions.js')+'');
-/* global fuzzy_search, get_fuzzy_search_string */
+/* global fuzzy_search, get_fuzzy_search_string, to_escaped_char_array */
 
 describe('fuzzy_search', function() {
     let search_string;
@@ -95,5 +95,28 @@ describe('get_fuzzy_search_string', function() {
             fuzzy_search_string,
             "(\\\\)"
         );
+    });
+});
+
+describe('to_escaped_char_array', function() {
+    it('is motivated to write a special function for this', function() {
+        const string = "\\";
+        assert.notEqual(string.split("").length, string.length);
+    });
+
+    it('should not split escaped backslashes', function() {
+        const escaped_char_array = to_escaped_char_array('\\');
+        assert.deepEqual(escaped_char_array, ["\\\\"]);
+    });
+
+    it('should escape special characters', function() {
+        const escaped_char_array = to_escaped_char_array('(.*?');
+        assert.deepEqual(escaped_char_array, ["\\(", "\\.", "\\*", "\\?"]);
+    });
+
+    it('should split regular characters into array', function() {
+        const string = 'abcdefghijklmnopqrstuvxyz';
+        const escaped_char_array = to_escaped_char_array(string);
+        assert.deepEqual(escaped_char_array, string.split(""));
     });
 });

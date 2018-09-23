@@ -3,9 +3,9 @@ const assert = require('chai').assert;
 const fs = require('fs');
 // Include the script in the global scope (not using 'module' to be compatible with client-side js)
 eval(fs.readFileSync('src/functions.js')+'');
-/* global fuzzy_search */
+/* global fuzzy_search, get_fuzzy_search_string */
 
-describe('fuzzy search', function() {
+describe('fuzzy_search', function() {
     let search_string;
     beforeEach(function() {
         search_string = "heeej"
@@ -42,9 +42,28 @@ describe('fuzzy search', function() {
         assert.deepEqual([], search_result);
     });
 
-    it('should escape regex', function() {
+    it('should match escaped strings', function() {
         search_string = "\\scan match as well\\s";
         let search_result = fuzzy_search("\\s\\s", search_string);
         assert.deepEqual([search_string, '\\s', 'can match as well', '\\s'], search_result);
+    });
+});
+
+describe('get_fuzzy_search_string', function() {
+    it('should group letter', function() {
+        let search_string = "a";
+        let fuzzy_search_string = get_fuzzy_search_string(search_string);
+        assert.equal("(a)", fuzzy_search_string);
+    });
+
+    it('should group between letters', function() {
+        let search_string = "aa";
+        let fuzzy_search_string = get_fuzzy_search_string(search_string);
+        assert.equal("(a)(.*?)(a)", fuzzy_search_string);
+    });
+
+    it('should escape escapee as one group', function() {
+        let fuzzy_search_string = get_fuzzy_search_string("\\");
+        assert.equal("(\\\\)", fuzzy_search_string);
     });
 });

@@ -19,5 +19,10 @@ function fuzzy_search(needle, haystack) {
     needle_re = needle_re.split("").join(")(.*?)(");
     needle_re = "(" + needle_re + ")";
     needle_re = RegExp(needle_re, "gi");
-    return needle_re.exec(haystack);
+    let res = needle_re.exec(haystack);
+    if (res === null) {
+        return [];
+    } else {
+        return res;
+    }
 }

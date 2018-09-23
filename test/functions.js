@@ -6,7 +6,10 @@ eval(fs.readFileSync('src/functions.js')+'');
 /* global fuzzy_search */
 
 describe('fuzzy search', function() {
-    let search_string = "heeej";
+    let search_string;
+    beforeEach(function() {
+        search_string = "heeej"
+    });
 
     it('should find word', function() {
         let search_result = fuzzy_search("hej", search_string);
@@ -37,5 +40,11 @@ describe('fuzzy search', function() {
     it('should not find letter', function() {
         let search_result = fuzzy_search("s", search_string);
         assert.deepEqual([], search_result);
+    });
+
+    it('should escape regex', function() {
+        search_string = "\\scan match as well\\s";
+        let search_result = fuzzy_search("\\s\\s", search_string);
+        assert.deepEqual([search_string, '\\s', 'can match as well', '\\s'], search_result);
     });
 });

@@ -74,6 +74,7 @@ var overlay_list = new (class OverlayList {
 
     push (copy_element, copied_element) {
         let wasEmpty = this.isEmpty();
+        copy_element.classList.add("kn__copy_element");
         this.list.push(new Overlay(copy_element, copied_element));
         // Not being empty any more
         if (wasEmpty) {
@@ -184,7 +185,7 @@ let search_bar = new (
         }
 
         filter_links(search_text) {
-            for (let link of document.querySelectorAll("a")) {
+            for (let link of document.querySelectorAll("a:not(.kn__copy_element)")) {
                 if (!overlay_list.has_node(link)) {
                     if (fuzzy_search(search_text, link.innerText) !== null) {
                         absolute_element_overlay(link, search_bar.overlay);

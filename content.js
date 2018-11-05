@@ -51,6 +51,7 @@ document.addEventListener("keydown", function make_links_visible(event) {
 
 class Overlay {
     constructor (copy_element, copied_element) {
+        copy_element.style.visibility = "hidden";
         this.copy_element = copy_element;
         this.copied_element = copied_element;
     }
@@ -63,6 +64,7 @@ class Overlay {
 
 var overlay_list = new (class OverlayList {
     constructor () {
+        this.link_counter = 0;
         this.list = [];
         this.overlay = document.createElement("kn__overlay");
         // document.body.appendChild(this.overlay);
@@ -74,7 +76,10 @@ var overlay_list = new (class OverlayList {
 
     push (copy_element, copied_element) {
         let wasEmpty = this.isEmpty();
-        copy_element.classList.add("kn__copy_element");
+        copied_element.classList.add("kn__copy_element");
+        copied_element.setAttribute("kn__link_index", this.link_counter);
+        copy_element.setAttribute("kn__link_index", this.link_counter);
+        this.link_counter++;
         this.list.push(new Overlay(copy_element, copied_element));
         // Not being empty any more
         if (wasEmpty) {
@@ -83,32 +88,34 @@ var overlay_list = new (class OverlayList {
     }
 
     clear () {
+        this.link_counter = 0;
         this.overlay.classList.remove("activated");
-        let clear_elements = this.list;
-        this.list = [];
-        // Remove all elements after animation is done
-        setTimeout(
-            (
-                function (clear_elements_internal) {
-                    return function () {
-                        for (let i in clear_elements_internal) {
-                            clear_elements_internal[i].destroy();
-                        }
-                    };
-                }
-            )(clear_elements), 500);
+        for (let i = this.list.length - 1; i >= 0; i--) {
+            this.destroy_index(i);
+        }
+    }
+
+    destroy_index (index) {
+        if (index < 0 || index >= this.list.length)
+            return;
+        let el = this.list[index];
+        this.list.splice(index, 1);
+        el.copy_element.removeAttribute("kn__link_index");
+        el.destroy();
+    }
+
+    destroy_node (node) {
+        if (!this.has_node(node))
+            return;
+        for (var index = 0; index < this.list.length; index++) {
+            if (this.list[index].copy_element.getAttribute("kn__link_index") === node.getAttribute("kn__link_index")) {
+                this.destroy_index(index);
+            }
+        }
     }
 
     has_node (node) {
-        for (var index = 0; index < this.list.length; index++) {
-            if (this.list[index].copy_element === node) {
-                console.log("equal: " + index);
-                return true;
-            } else {
-                console.log("not equal: " + index);
-            }
-        }
-        return false;
+        return node.hasAttribute("kn__link_index");
     }
 })();
 
@@ -126,7 +133,6 @@ function strip_attribute(element, attribute="id", clone=true) {
 
 function absolute_element_overlay(copy_element, to_element=document.body) {
     let copied_element = strip_attribute(copy_element);
-    copy_element.style.visibility = "hidden";
 
     copied_element.style.position = 'absolute';
     function update_coordinates () {
@@ -156,10 +162,8 @@ let search_bar = new (
             let input = document.createElement("input");
             input.addEventListener("input", function () {
                 let search_text = this.value;
-                overlay_list.clear();
-                if (search_text.replace(/ /g, "") !== "") {
-                    search_bar.filter_links(search_text);
-                }
+                search_text = search_text.replace(/ /g, "");
+                search_bar.filter_links(search_text);
             });
             this.input = input;
             search_box.appendChild(this.input);
@@ -186,10 +190,10 @@ let search_bar = new (
 
         filter_links(search_text) {
             for (let link of document.querySelectorAll("a:not(.kn__copy_element)")) {
-                if (!overlay_list.has_node(link)) {
-                    if (fuzzy_search(search_text, link.innerText) !== null) {
-                        absolute_element_overlay(link, search_bar.overlay);
-                    }
+                if (overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) === null) {
+                    overlay_list.destroy_node(link);
+                } else if (!overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) !== null) {
+                    absolute_element_overlay(link, search_bar.overlay);
                 }
             }
         }
@@ -213,6 +217,7 @@ document.addEventListener("keydown", function app_state_change(event) {
         if (event.key === "f" && event.ctrlKey && event.altKey) {
             app_state = APP_STATE_FILTER;
             search_bar.attach();
+            overlay_list.clear();
             console.log("Going to filter state");
         }
     } else if (app_state === APP_STATE_FILTER) {

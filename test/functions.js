@@ -48,7 +48,7 @@ describe('fuzzy_search', function() {
         let search_result = fuzzy_search("hejs", search_string);
         assert.deepEqual(
             search_result,
-            []
+            null
         );
     });
 
@@ -56,7 +56,7 @@ describe('fuzzy_search', function() {
         let search_result = fuzzy_search("s", search_string);
         assert.deepEqual(
             search_result,
-            []
+            null
         );
     });
 

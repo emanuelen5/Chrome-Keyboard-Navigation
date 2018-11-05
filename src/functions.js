@@ -33,9 +33,5 @@ function fuzzy_search(needle, haystack) {
     let needle_re = get_fuzzy_search_string(needle);
     needle_re = RegExp(needle_re, "gi");
     let res = needle_re.exec(haystack);
-    if (res === null) {
-        return [];
-    } else {
-        return res;
-    }
+    return res;
 }

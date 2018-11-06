@@ -134,6 +134,11 @@ function strip_attribute(element, attribute="id", clone=true) {
 function absolute_element_overlay(copy_element, to_element=document.body) {
     let copied_element = strip_attribute(copy_element);
 
+    let copy_element_style = window.getComputedStyle(copy_element);
+    for (let i = 0; i < copy_element_style.length; i++) {
+        let style_name = copy_element_style[i];
+        copied_element.style[style_name] = copy_element_style[style_name];
+    }
     copied_element.style.position = 'absolute';
     function update_coordinates () {
         let rect = copy_element.getBoundingClientRect();

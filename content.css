@@ -45,6 +45,7 @@ kn__search_box {
     position: fixed;
     transition: opacity 0.5s ease-in-out;
     opacity: 0.0;
+    pointer-events: none;
     z-index: 1001;
 }
 
@@ -55,6 +56,7 @@ kn__search_box > input {
 kn__search_box.activated {
     transition: opacity 0.25s ease-in-out;
     opacity: 1;
+    pointer-events: auto; // No click-through
 }
 
 kn__search_box.deactivated {

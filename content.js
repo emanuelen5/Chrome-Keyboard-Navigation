@@ -184,7 +184,7 @@ let search_bar = new (
             let search_box = document.createElement("kn__search_box");
 
             let input = document.createElement("input");
-            input.addEventListener("input", function () {
+            input.addEventListener("input", function on_search_bar_input () {
                 let search_text = this.value;
                 search_text = search_text.replace(/ /g, "");
                 search_bar.filter_links(search_text);
@@ -201,6 +201,9 @@ let search_bar = new (
                 this.is_attached = true;
                 this.overlay.classList.add("activated");
                 this.search_box.classList.add("activated");
+                this.input.value = "";
+                this.old_focus = document.activeElement.hasFocus && document.activeElement || document.querySelector("*:focus");
+                this.input.focus();
             }
         }
 
@@ -209,6 +212,8 @@ let search_bar = new (
                 this.is_attached = false;
                 this.overlay.classList.remove("activated");
                 this.search_box.classList.remove("activated");
+                this.input.value = "";
+                this.old_focus.focus();
             }
         }
 
@@ -252,7 +257,6 @@ document.addEventListener("keydown", function app_state_change(event) {
             app_state = APP_STATE_IDLE;
             search_bar.detach();
             overlay_list.clear();
-            search_bar.input.value = "";
             console.log("Going to idle state");
         }
     }

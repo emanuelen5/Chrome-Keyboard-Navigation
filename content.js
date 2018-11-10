@@ -217,7 +217,9 @@ let search_bar = new (
                 if (overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) === null) {
                     overlay_list.destroy_node(link);
                 } else if (!overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) !== null) {
-                    absolute_element_overlay(link, search_bar.overlay);
+                    if (classify_position(link) == VISIBLE) {
+                        absolute_element_overlay(link, search_bar.overlay);
+                    }
                 }
             }
         }

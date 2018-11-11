@@ -181,6 +181,18 @@ let search_bar = new (
         constructor() {
             this.is_attached = false;
             this.overlay = document.createElement("kn__overlay");
+
+            window.addEventListener("resize", (
+                function (overlay) {
+                    let fn = function update_overlay_size() {
+                        overlay.style.width = document.body.offsetWidth + "px";
+                        overlay.style.height = document.body.offsetHeight + "px";
+                    };
+                    fn();
+                    return fn;
+                }
+            )(this.overlay));
+
             let search_box = document.createElement("kn__search_box");
 
             let input = document.createElement("input");

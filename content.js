@@ -187,6 +187,12 @@ let search_bar = new (
                     fn();
                     return fn;
                 })(this.overlay));
+            window.addEventListener("resize", function resize_redraw() {
+                overlay_list.redraw();
+            });
+            window.addEventListener("scroll", function scroll_redraw() {
+                overlay_list.redraw();
+            });
 
             let search_box = document.createElement("kn__search_box");
 

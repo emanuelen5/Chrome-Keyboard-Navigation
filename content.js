@@ -70,7 +70,6 @@ document.addEventListener("keydown", function make_links_visible(event) {
 
 class Overlay {
     constructor (copy_element, copied_element) {
-        copy_element.style.visibility = "hidden";
         this.copy_element = copy_element;
         this.copied_element = copied_element;
     }
@@ -143,13 +142,29 @@ function strip_attribute(element, attribute="id", clone=true) {
     return return_element;
 }
 
+// Only the styles we care about
+let inheritable_styles = [
+    "color",
+    "font-family",
+    "font-size",
+    "font-style",
+    "font-variant",
+    "font-weight",
+    "font",
+    "text-align",
+    "text-indent",
+    "text-transform",
+    "white-space",
+    "word-spacing"
+];
 function absolute_element_overlay(copy_element, to_element=document.body) {
     let copied_element = strip_attribute(copy_element);
 
     let copy_element_style = window.getComputedStyle(copy_element);
-    for (let i = 0; i < copy_element_style.length; i++) {
-        let style_name = copy_element_style[i];
-        copied_element.style[style_name] = copy_element_style[style_name];
+    for (const style_name of inheritable_styles) {
+        let style_value = copy_element_style[style_name];
+        if (style_value !== undefined)
+            copied_element.style[style_name] = style_value;
     }
     copied_element.style.position = 'absolute';
     function update_coordinates () {
@@ -229,9 +244,7 @@ let search_bar = new (
                 if (overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) === null) {
                     overlay_list.destroy_node(link);
                 } else if (!overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) !== null) {
-                    if (classify_position(link) == VISIBLE) {
-                        absolute_element_overlay(link, frag);
-                    }
+                    absolute_element_overlay(link, frag);
                 }
             }
             search_bar.overlay.appendChild(frag);

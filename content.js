@@ -76,7 +76,6 @@ class Overlay {
 
     destroy () {
         this.copied_element.parentNode.removeChild(this.copied_element);
-        this.copy_element.style.visibility = "visible";
     }
 }
 
@@ -151,6 +150,7 @@ let inheritable_styles = [
     "font-variant",
     "font-weight",
     "font",
+    "padding",
     "text-align",
     "text-indent",
     "text-transform",
@@ -158,29 +158,28 @@ let inheritable_styles = [
     "word-spacing"
 ];
 function absolute_element_overlay(copy_element, to_element=document.body) {
-    let copied_element = strip_attribute(copy_element);
+    const copied_element = strip_attribute(copy_element);
 
-    let copy_element_style = window.getComputedStyle(copy_element);
+    const copy_element_style = window.getComputedStyle(copy_element);
     for (const style_name of inheritable_styles) {
-        let style_value = copy_element_style[style_name];
+        const style_value = copy_element_style[style_name];
         if (style_value !== undefined)
             copied_element.style[style_name] = style_value;
     }
     copied_element.style.position = 'absolute';
     function update_coordinates () {
-        let rect = copy_element.getBoundingClientRect();
-        copied_element.style.left = rect.left + 'px';
-        copied_element.style.top = rect.top + 'px';
+        const rect = copy_element.getBoundingClientRect();
+        copied_element.style.left = window.scrollX + rect.left + 'px';
+        copied_element.style.top = window.scrollY + rect.top + 'px';
         copied_element.style.width = (rect.width || copied_element.offsetWidth) + 'px';
     }
-
-    overlay_list.push(copy_element, copied_element);
+    update_coordinates();
 
     window.addEventListener("resize", function () {
         update_coordinates();
     });
-    update_coordinates();
 
+    overlay_list.push(copy_element, copied_element);
     to_element.appendChild(copied_element);
 }
 

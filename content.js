@@ -159,6 +159,7 @@ function strip_attribute(element, attribute="id", clone=true) {
 }
 
 let canvas, ctx;
+let update_overlay_size_fn;
 
 let search_bar = new (
     class SearchBar {
@@ -172,23 +173,23 @@ let search_bar = new (
             ctx = canvas.getContext("2d");
             this.overlay = document.createElement("kn__overlay");
             this.overlay.appendChild(canvas);
+            update_overlay_size_fn = (function (overlay) {
+                let fn = function update_overlay_size() {
+                    const width = document.body.offsetWidth;
+                    const height = document.body.offsetHeight;
+                    canvas.width = width;
+                    canvas.height = height;
+                    overlay.style.width = width + "px";
+                    overlay.style.height = height + "px";
+                    ctx.fillStyle = "#FFF";
+                    ctx.clearRect(0,0,width,height);
+                    ctx.fillRect(0,0,width,height);
+                };
+                fn();
+                return fn;
+            })(this.overlay);
 
-            window.addEventListener("resize", 
-                (function (overlay) {
-                    let fn = function update_overlay_size() {
-                        const width = document.body.offsetWidth;
-                        const height = document.body.offsetHeight;
-                        canvas.width = width;
-                        canvas.height = height;
-                        overlay.style.width = width + "px";
-                        overlay.style.height = height + "px";
-                        ctx.fillStyle = "#FFF";
-                        ctx.clearRect(0,0,width,height);
-                        ctx.fillRect(0,0,width,height);
-                    };
-                    fn();
-                    return fn;
-                })(this.overlay));
+            window.addEventListener("resize", update_overlay_size_fn);
             window.addEventListener("resize", function resize_redraw() {
                 overlay_list.redraw();
             });
@@ -267,6 +268,7 @@ document.addEventListener("keydown", function app_state_change(event) {
             app_state = APP_STATE_FILTER;
             search_bar.attach();
             overlay_list.clear();
+            update_overlay_size_fn();
             console.log("Going to filter state");
         }
     } else if (app_state === APP_STATE_FILTER) {

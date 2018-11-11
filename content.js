@@ -69,16 +69,14 @@ document.addEventListener("keydown", function make_links_visible(event) {
 });
 
 class Overlay {
-    constructor (copy_element, copied_element) {
-        this.copy_element = copy_element;
-        this.copied_element = copied_element;
+    constructor (element) {
+        this.element = element;
         this.on_destruction = [];
     }
 
     destroy () {
         for (const fn_h of this.on_destruction)
             fn_h(this);
-        this.copied_element.parentNode.removeChild(this.copied_element);
     }
 
     register_on_destruction (fn_h) {
@@ -96,12 +94,10 @@ var overlay_list = new (class OverlayList {
         return (this.list.length === 0);
     }
 
-    push (copy_element, copied_element) {
-        copied_element.classList.add("kn__copy_element");
-        copied_element.setAttribute("kn__link_index", this.link_counter);
+    push (copy_element) {
         copy_element.setAttribute("kn__link_index", this.link_counter);
         this.link_counter++;
-        const overlay = new Overlay(copy_element, copied_element);
+        const overlay = new Overlay(copy_element);
         this.list.push(overlay);
         return overlay;
     }
@@ -118,7 +114,7 @@ var overlay_list = new (class OverlayList {
             return;
         let el = this.list[index];
         this.list.splice(index, 1);
-        el.copy_element.removeAttribute("kn__link_index");
+        el.element.removeAttribute("kn__link_index");
         el.destroy();
     }
 
@@ -126,7 +122,7 @@ var overlay_list = new (class OverlayList {
         if (!this.has_node(node))
             return;
         for (var index = 0; index < this.list.length; index++) {
-            if (this.list[index].copy_element.getAttribute("kn__link_index") === node.getAttribute("kn__link_index")) {
+            if (this.list[index].element.getAttribute("kn__link_index") === node.getAttribute("kn__link_index")) {
                 this.destroy_index(index);
             }
         }
@@ -149,72 +145,62 @@ function strip_attribute(element, attribute="id", clone=true) {
     return return_element;
 }
 
-// Only the styles we care about
-let inheritable_styles = [
-    "color",
-    "font-family",
-    "font-size",
-    "font-style",
-    "font-variant",
-    "font-weight",
-    "font",
-    "padding",
-    "text-align",
-    "text-indent",
-    "text-transform",
-    "white-space",
-    "word-spacing"
-];
-function absolute_element_overlay(copy_element, to_element=document.body) {
+let canvas, ctx;
+function absolute_element_overlay(copy_element) {
     const rect = copy_element.getBoundingClientRect();
     if (rect.width === 0)
         return;
-    const copied_element = strip_attribute(copy_element);
 
-    const copy_element_style = window.getComputedStyle(copy_element);
-    for (const style_name of inheritable_styles) {
-        const style_value = copy_element_style[style_name];
-        if (style_value !== undefined)
-            copied_element.style[style_name] = style_value;
-    }
-    copied_element.style.position = 'absolute';
     function update_coordinates () {
         const rect = copy_element.getBoundingClientRect();
-        copied_element.style.left = window.scrollX + rect.left + 'px';
-        copied_element.style.top = window.scrollY + rect.top + 'px';
-        copied_element.style.width = (rect.width || copied_element.offsetWidth) + 'px';
+        let left = window.scrollX + rect.left;
+        let top = window.scrollY + rect.top;
+        let width = (rect.width || copy_element.offsetWidth);
+        let height = (rect.height || copy_element.offsetHeight);
+        ctx.clearRect(left, top, width, height);
     }
     update_coordinates();
 
     window.addEventListener("resize", update_coordinates);
     window.addEventListener("scroll", update_coordinates);
 
-    const overlay = overlay_list.push(copy_element, copied_element);
+    const overlay = overlay_list.push(copy_element);
     overlay.register_on_destruction((
         (fn) => { return () => {
             window.removeEventListener("scroll", fn);
             window.removeEventListener("resize", fn);
         }; }
     )(update_coordinates));
-    to_element.appendChild(copied_element);
 }
 
 let search_bar = new (
     class SearchBar {
         constructor() {
             this.is_attached = false;
-            this.overlay = document.createElement("kn__overlay");
+            canvas = document.createElement("canvas");
+            canvas.style.width  = "100%";
+            canvas.style.height = "100%";
+            canvas.style.pointerEvents = "none";
+            canvas.style.position = "absolute";
+            canvas.style.zIndex = 16000;
+            canvas.style.top = 0;
+            canvas.style.left = 0;
+            ctx = canvas.getContext("2d");
+            this.overlay = canvas;
 
-            window.addEventListener("resize", (
-                function (overlay) {
+            window.addEventListener("resize", 
+                (function (overlay) {
                     let fn = function update_overlay_size() {
+                        canvas.width = document.body.offsetWidth;
+                        canvas.height = document.body.offsetHeight;
                         overlay.style.width = document.body.offsetWidth + "px";
                         overlay.style.height = document.body.offsetHeight + "px";
+                        ctx.fillStyle = "rgba(255,0,0,0.9)";
+                        ctx.fillRect(0,0,canvas.width,canvas.height);
                     };
                     fn();
                     return fn;
-                }
-            )(this.overlay));
+                })(this.overlay));
 
             let search_box = document.createElement("kn__search_box");
 
@@ -254,15 +240,13 @@ let search_bar = new (
         }
 
         filter_links(search_text) {
-            var frag = document.createDocumentFragment();
             for (let link of document.querySelectorAll("a:not(.kn__copy_element)")) {
                 if (overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) === null) {
                     overlay_list.destroy_node(link);
                 } else if (!overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) !== null) {
-                    absolute_element_overlay(link, frag);
+                    absolute_element_overlay(link);
                 }
             }
-            search_bar.overlay.appendChild(frag);
         }
     }
 )();
@@ -304,7 +288,7 @@ function test() {
     
     // Demo mode, animate some
     setTimeout(function () {
-        absolute_element_overlay(document.getElementById("first_link"), document.body);
+        absolute_element_overlay(document.getElementById("first_link"));
         setTimeout(function () {
             overlay_list.clear();
         }, 1000);

@@ -218,7 +218,8 @@ let search_bar = new (
                 this.overlay.classList.remove("activated");
                 this.search_box.classList.remove("activated");
                 this.input.value = "";
-                this.old_focus.focus();
+                if (this.old_focus)
+                    this.old_focus.focus();
             }
         }
 

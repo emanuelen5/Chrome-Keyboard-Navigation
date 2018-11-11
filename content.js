@@ -168,12 +168,10 @@ let search_bar = new (
             canvas.style.width  = "100%";
             canvas.style.height = "100%";
             canvas.style.pointerEvents = "none";
-            canvas.style.position = "absolute";
-            canvas.style.zIndex = 16000;
-            canvas.style.top = 0;
-            canvas.style.left = 0;
+            canvas.style.position = "relative";
             ctx = canvas.getContext("2d");
-            this.overlay = canvas;
+            this.overlay = document.createElement("kn__overlay");
+            this.overlay.appendChild(canvas);
 
             window.addEventListener("resize", 
                 (function (overlay) {
@@ -182,7 +180,7 @@ let search_bar = new (
                         canvas.height = document.body.offsetHeight;
                         overlay.style.width = document.body.offsetWidth + "px";
                         overlay.style.height = document.body.offsetHeight + "px";
-                        ctx.fillStyle = "rgba(255,255,255,0.9)";
+                        ctx.fillStyle = "#FFF";
                         ctx.clearRect(0,0,canvas.width,canvas.height);
                         ctx.fillRect(0,0,canvas.width,canvas.height);
                     };

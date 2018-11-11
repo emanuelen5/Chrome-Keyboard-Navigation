@@ -85,8 +85,6 @@ var overlay_list = new (class OverlayList {
     constructor () {
         this.link_counter = 0;
         this.list = [];
-        this.overlay = document.createElement("kn__overlay");
-        // document.body.appendChild(this.overlay);
     }
 
     isEmpty () {
@@ -100,15 +98,10 @@ var overlay_list = new (class OverlayList {
         copy_element.setAttribute("kn__link_index", this.link_counter);
         this.link_counter++;
         this.list.push(new Overlay(copy_element, copied_element));
-        // Not being empty any more
-        if (wasEmpty) {
-            this.overlay.classList.add("activated");
-        }
     }
 
     clear () {
         this.link_counter = 0;
-        this.overlay.classList.remove("activated");
         for (let i = this.list.length - 1; i >= 0; i--) {
             this.destroy_index(i);
         }

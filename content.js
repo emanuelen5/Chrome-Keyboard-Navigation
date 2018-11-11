@@ -176,13 +176,15 @@ let search_bar = new (
             window.addEventListener("resize", 
                 (function (overlay) {
                     let fn = function update_overlay_size() {
-                        canvas.width = document.body.offsetWidth;
-                        canvas.height = document.body.offsetHeight;
-                        overlay.style.width = document.body.offsetWidth + "px";
-                        overlay.style.height = document.body.offsetHeight + "px";
+                        const width = document.body.offsetWidth;
+                        const height = document.body.offsetHeight;
+                        canvas.width = width;
+                        canvas.height = height;
+                        overlay.style.width = width + "px";
+                        overlay.style.height = height + "px";
                         ctx.fillStyle = "#FFF";
-                        ctx.clearRect(0,0,canvas.width,canvas.height);
-                        ctx.fillRect(0,0,canvas.width,canvas.height);
+                        ctx.clearRect(0,0,width,height);
+                        ctx.fillRect(0,0,width,height);
                     };
                     fn();
                     return fn;

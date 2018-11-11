@@ -224,15 +224,17 @@ let search_bar = new (
         }
 
         filter_links(search_text) {
+            var frag = document.createDocumentFragment();
             for (let link of document.querySelectorAll("a:not(.kn__copy_element)")) {
                 if (overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) === null) {
                     overlay_list.destroy_node(link);
                 } else if (!overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) !== null) {
                     if (classify_position(link) == VISIBLE) {
-                        absolute_element_overlay(link, search_bar.overlay);
+                        absolute_element_overlay(link, frag);
                     }
                 }
             }
+            search_bar.overlay.appendChild(frag);
         }
     }
 )();

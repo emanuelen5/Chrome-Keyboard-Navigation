@@ -20,7 +20,7 @@ kn__overlay {
     transition: opacity 0.5s ease-in-out;
     opacity: 0.0;
     pointer-events: none;
-    z-index: 1000;
+    z-index: 16777270;
 }
 
 kn__overlay.activated {
@@ -46,7 +46,7 @@ kn__search_box {
     transition: opacity 0.5s ease-in-out;
     opacity: 0.0;
     pointer-events: none;
-    z-index: 1001;
+    z-index: 16777271;
 }
 
 kn__search_box > input {

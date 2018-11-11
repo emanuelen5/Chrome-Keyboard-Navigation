@@ -166,6 +166,9 @@ let inheritable_styles = [
     "word-spacing"
 ];
 function absolute_element_overlay(copy_element, to_element=document.body) {
+    const rect = copy_element.getBoundingClientRect();
+    if (rect.width === 0)
+        return;
     const copied_element = strip_attribute(copy_element);
 
     const copy_element_style = window.getComputedStyle(copy_element);

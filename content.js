@@ -112,10 +112,10 @@ var overlay_list = new (class OverlayList {
     destroy_index (index) {
         if (index < 0 || index >= this.list.length)
             return;
-        let el = this.list[index];
+        let overlay = this.list[index];
         this.list.splice(index, 1);
-        el.element.removeAttribute("kn__link_index");
-        el.destroy();
+        overlay.element.removeAttribute("kn__link_index");
+        overlay.destroy();
     }
 
     destroy_node (node) {
@@ -130,6 +130,19 @@ var overlay_list = new (class OverlayList {
 
     has_node (node) {
         return node.hasAttribute("kn__link_index");
+    }
+
+    redraw () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        for (const overlay of this.list) {
+            const rect = overlay.element.getBoundingClientRect();
+            let left = window.scrollX + Math.round(rect.left);
+            let top = window.scrollY + Math.round(rect.top);
+            let width = Math.round(rect.width || overlay.element.offsetWidth);
+            let height = Math.round(rect.height || overlay.element.offsetHeight);
+            ctx.clearRect(left, top, width, height);
+        }
     }
 })();
 
@@ -146,32 +159,6 @@ function strip_attribute(element, attribute="id", clone=true) {
 }
 
 let canvas, ctx;
-function absolute_element_overlay(copy_element) {
-    const rect = copy_element.getBoundingClientRect();
-    if (rect.width === 0)
-        return;
-
-    function update_coordinates () {
-        const rect = copy_element.getBoundingClientRect();
-        let left = window.scrollX + rect.left;
-        let top = window.scrollY + rect.top;
-        let width = (rect.width || copy_element.offsetWidth);
-        let height = (rect.height || copy_element.offsetHeight);
-        ctx.clearRect(left, top, width, height);
-    }
-    update_coordinates();
-
-    window.addEventListener("resize", update_coordinates);
-    window.addEventListener("scroll", update_coordinates);
-
-    const overlay = overlay_list.push(copy_element);
-    overlay.register_on_destruction((
-        (fn) => { return () => {
-            window.removeEventListener("scroll", fn);
-            window.removeEventListener("resize", fn);
-        }; }
-    )(update_coordinates));
-}
 
 let search_bar = new (
     class SearchBar {
@@ -195,7 +182,8 @@ let search_bar = new (
                         canvas.height = document.body.offsetHeight;
                         overlay.style.width = document.body.offsetWidth + "px";
                         overlay.style.height = document.body.offsetHeight + "px";
-                        ctx.fillStyle = "rgba(255,0,0,0.9)";
+                        ctx.fillStyle = "rgba(255,255,255,0.9)";
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
                         ctx.fillRect(0,0,canvas.width,canvas.height);
                     };
                     fn();
@@ -241,12 +229,16 @@ let search_bar = new (
 
         filter_links(search_text) {
             for (let link of document.querySelectorAll("a:not(.kn__copy_element)")) {
-                if (overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) === null) {
+                if (fuzzy_search(search_text, link.textContent) !== null) {
+                    const rect = link.getBoundingClientRect();
+                    if (rect.width === 0)
+                        continue;
+                    overlay_list.push(link);
+                } else {
                     overlay_list.destroy_node(link);
-                } else if (!overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) !== null) {
-                    absolute_element_overlay(link);
                 }
             }
+            overlay_list.redraw();
         }
     }
 )();
@@ -277,6 +269,7 @@ document.addEventListener("keydown", function app_state_change(event) {
             app_state = APP_STATE_IDLE;
             search_bar.detach();
             overlay_list.clear();
+            overlay_list.redraw();
             console.log("Going to idle state");
         }
     }
@@ -288,7 +281,7 @@ function test() {
     
     // Demo mode, animate some
     setTimeout(function () {
-        absolute_element_overlay(document.getElementById("first_link"));
+        overlay_list.push(document.getElementById("first_link"));
         setTimeout(function () {
             overlay_list.clear();
         }, 1000);

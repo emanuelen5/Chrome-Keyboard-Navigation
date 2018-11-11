@@ -184,10 +184,14 @@ function absolute_element_overlay(copy_element, to_element=document.body) {
     update_coordinates();
 
     window.addEventListener("resize", update_coordinates);
+    window.addEventListener("scroll", update_coordinates);
 
     const overlay = overlay_list.push(copy_element, copied_element);
     overlay.register_on_destruction((
-        (fn) => { return () => { window.removeEventListener("resize", fn); }; }
+        (fn) => { return () => {
+            window.removeEventListener("scroll", fn);
+            window.removeEventListener("resize", fn);
+        }; }
     )(update_coordinates));
     to_element.appendChild(copied_element);
 }

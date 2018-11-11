@@ -72,10 +72,17 @@ class Overlay {
     constructor (copy_element, copied_element) {
         this.copy_element = copy_element;
         this.copied_element = copied_element;
+        this.on_destruction = [];
     }
 
     destroy () {
+        for (const fn_h of this.on_destruction)
+            fn_h(this);
         this.copied_element.parentNode.removeChild(this.copied_element);
+    }
+
+    register_on_destruction (fn_h) {
+        this.on_destruction.push(fn_h);
     }
 }
 
@@ -90,12 +97,13 @@ var overlay_list = new (class OverlayList {
     }
 
     push (copy_element, copied_element) {
-        let wasEmpty = this.isEmpty();
         copied_element.classList.add("kn__copy_element");
         copied_element.setAttribute("kn__link_index", this.link_counter);
         copy_element.setAttribute("kn__link_index", this.link_counter);
         this.link_counter++;
-        this.list.push(new Overlay(copy_element, copied_element));
+        const overlay = new Overlay(copy_element, copied_element);
+        this.list.push(overlay);
+        return overlay;
     }
 
     clear () {
@@ -175,11 +183,12 @@ function absolute_element_overlay(copy_element, to_element=document.body) {
     }
     update_coordinates();
 
-    window.addEventListener("resize", function () {
-        update_coordinates();
-    });
+    window.addEventListener("resize", update_coordinates);
 
-    overlay_list.push(copy_element, copied_element);
+    const overlay = overlay_list.push(copy_element, copied_element);
+    overlay.register_on_destruction((
+        (fn) => { return () => { window.removeEventListener("resize", fn); }; }
+    )(update_coordinates));
     to_element.appendChild(copied_element);
 }
 

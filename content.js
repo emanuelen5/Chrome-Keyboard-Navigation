@@ -179,8 +179,8 @@ let search_bar = new (
                     const height = window.innerHeight;
                     canvas.width = width;
                     canvas.height = height;
-                    canvas.style.width = width + "px";
-                    canvas.style.height = height + "px";
+                    overlay.style.width = width + "px";
+                    overlay.style.height = height + "px";
                     ctx.fillStyle = "#FFF";
                     ctx.clearRect(0,0,width,height);
                     ctx.fillRect(0,0,width,height);

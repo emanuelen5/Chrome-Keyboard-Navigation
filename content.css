@@ -11,13 +11,20 @@
 }
 
 kn__overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
     transition: opacity 0.5s ease-in-out;
     opacity: 0.0;
     pointer-events: none; /*No click-through*/
     z-index: 16777270;
+}
+
+kn__overlay > canvas {
+    pointer-events: none;
+    position: relative;
 }
 
 kn__overlay.activated {

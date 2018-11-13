@@ -137,8 +137,8 @@ var overlay_list = new (class OverlayList {
         ctx.fillRect(0,0,canvas.width,canvas.height);
         for (const overlay of this.list) {
             const rect = overlay.element.getBoundingClientRect();
-            let left = window.scrollX + Math.round(rect.left);
-            let top = window.scrollY + Math.round(rect.top);
+            let left = Math.round(rect.left);
+            let top = Math.round(rect.top);
             let width = Math.round(rect.width || overlay.element.offsetWidth);
             let height = Math.round(rect.height || overlay.element.offsetHeight);
             ctx.clearRect(left, top, width, height);
@@ -170,21 +170,17 @@ let search_bar = new (
         constructor() {
             this.is_attached = false;
             canvas = document.createElement("canvas");
-            canvas.style.width  = "100%";
-            canvas.style.height = "100%";
-            canvas.style.pointerEvents = "none";
-            canvas.style.position = "relative";
             ctx = canvas.getContext("2d");
             this.overlay = document.createElement("kn__overlay");
             this.overlay.appendChild(canvas);
             update_overlay_size_fn = (function (overlay) {
                 let fn = function update_overlay_size() {
-                    const width = document.body.offsetWidth;
-                    const height = document.body.offsetHeight;
+                    const width = window.innerWidth;
+                    const height = window.innerHeight;
                     canvas.width = width;
                     canvas.height = height;
-                    overlay.style.width = width + "px";
-                    overlay.style.height = height + "px";
+                    canvas.style.width = width + "px";
+                    canvas.style.height = height + "px";
                     ctx.fillStyle = "#FFF";
                     ctx.clearRect(0,0,width,height);
                     ctx.fillRect(0,0,width,height);
@@ -214,6 +210,7 @@ let search_bar = new (
                 update_overlay_size_fn(); // Make sure it's the correct size on startup
                 window.addEventListener("resize", redraw_overlay);
                 window.addEventListener("scroll", redraw_overlay);
+                redraw_overlay();
                 this.is_attached = true;
                 this.overlay.classList.add("activated");
                 this.search_box.classList.add("activated");

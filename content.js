@@ -69,16 +69,14 @@ document.addEventListener("keydown", function make_links_visible(event) {
 });
 
 class Overlay {
-    constructor (copy_element, copied_element) {
-        this.copy_element = copy_element;
-        this.copied_element = copied_element;
+    constructor (element) {
+        this.element = element;
         this.on_destruction = [];
     }
 
     destroy () {
         for (const fn_h of this.on_destruction)
             fn_h(this);
-        this.copied_element.parentNode.removeChild(this.copied_element);
     }
 
     register_on_destruction (fn_h) {
@@ -96,12 +94,10 @@ var overlay_list = new (class OverlayList {
         return (this.list.length === 0);
     }
 
-    push (copy_element, copied_element) {
-        copied_element.classList.add("kn__copy_element");
-        copied_element.setAttribute("kn__link_index", this.link_counter);
+    push (copy_element) {
         copy_element.setAttribute("kn__link_index", this.link_counter);
         this.link_counter++;
-        const overlay = new Overlay(copy_element, copied_element);
+        const overlay = new Overlay(copy_element);
         this.list.push(overlay);
         return overlay;
     }
@@ -116,17 +112,17 @@ var overlay_list = new (class OverlayList {
     destroy_index (index) {
         if (index < 0 || index >= this.list.length)
             return;
-        let el = this.list[index];
+        let overlay = this.list[index];
         this.list.splice(index, 1);
-        el.copy_element.removeAttribute("kn__link_index");
-        el.destroy();
+        overlay.element.removeAttribute("kn__link_index");
+        overlay.destroy();
     }
 
     destroy_node (node) {
         if (!this.has_node(node))
             return;
         for (var index = 0; index < this.list.length; index++) {
-            if (this.list[index].copy_element.getAttribute("kn__link_index") === node.getAttribute("kn__link_index")) {
+            if (this.list[index].element.getAttribute("kn__link_index") === node.getAttribute("kn__link_index")) {
                 this.destroy_index(index);
             }
         }
@@ -134,6 +130,19 @@ var overlay_list = new (class OverlayList {
 
     has_node (node) {
         return node.hasAttribute("kn__link_index");
+    }
+
+    redraw () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        for (const overlay of this.list) {
+            const rect = overlay.element.getBoundingClientRect();
+            let left = Math.round(rect.left);
+            let top = Math.round(rect.top);
+            let width = Math.round(rect.width || overlay.element.offsetWidth);
+            let height = Math.round(rect.height || overlay.element.offsetHeight);
+            ctx.clearRect(left, top, width, height);
+        }
     }
 })();
 
@@ -149,72 +158,36 @@ function strip_attribute(element, attribute="id", clone=true) {
     return return_element;
 }
 
-// Only the styles we care about
-let inheritable_styles = [
-    "color",
-    "font-family",
-    "font-size",
-    "font-style",
-    "font-variant",
-    "font-weight",
-    "font",
-    "padding",
-    "text-align",
-    "text-indent",
-    "text-transform",
-    "white-space",
-    "word-spacing"
-];
-function absolute_element_overlay(copy_element, to_element=document.body) {
-    const rect = copy_element.getBoundingClientRect();
-    if (rect.width === 0)
-        return;
-    const copied_element = strip_attribute(copy_element);
+let canvas, ctx;
+let update_overlay_size_fn;
 
-    const copy_element_style = window.getComputedStyle(copy_element);
-    for (const style_name of inheritable_styles) {
-        const style_value = copy_element_style[style_name];
-        if (style_value !== undefined)
-            copied_element.style[style_name] = style_value;
-    }
-    copied_element.style.position = 'absolute';
-    function update_coordinates () {
-        const rect = copy_element.getBoundingClientRect();
-        copied_element.style.left = window.scrollX + rect.left + 'px';
-        copied_element.style.top = window.scrollY + rect.top + 'px';
-        copied_element.style.width = (rect.width || copied_element.offsetWidth) + 'px';
-    }
-    update_coordinates();
-
-    window.addEventListener("resize", update_coordinates);
-    window.addEventListener("scroll", update_coordinates);
-
-    const overlay = overlay_list.push(copy_element, copied_element);
-    overlay.register_on_destruction((
-        (fn) => { return () => {
-            window.removeEventListener("scroll", fn);
-            window.removeEventListener("resize", fn);
-        }; }
-    )(update_coordinates));
-    to_element.appendChild(copied_element);
+function redraw_overlay() {
+    overlay_list.redraw();
 }
 
 let search_bar = new (
     class SearchBar {
         constructor() {
             this.is_attached = false;
+            canvas = document.createElement("canvas");
+            ctx = canvas.getContext("2d");
             this.overlay = document.createElement("kn__overlay");
-
-            window.addEventListener("resize", (
-                function (overlay) {
-                    let fn = function update_overlay_size() {
-                        overlay.style.width = document.body.offsetWidth + "px";
-                        overlay.style.height = document.body.offsetHeight + "px";
-                    };
-                    fn();
-                    return fn;
-                }
-            )(this.overlay));
+            this.overlay.appendChild(canvas);
+            update_overlay_size_fn = (function (overlay) {
+                let fn = function update_overlay_size() {
+                    const width = window.innerWidth;
+                    const height = window.innerHeight;
+                    canvas.width = width;
+                    canvas.height = height;
+                    canvas.style.width = width + "px";
+                    canvas.style.height = height + "px";
+                    ctx.fillStyle = "#FFF";
+                    ctx.clearRect(0,0,width,height);
+                    ctx.fillRect(0,0,width,height);
+                };
+                fn();
+                return fn;
+            })(this.overlay);
 
             let search_box = document.createElement("kn__search_box");
 
@@ -233,6 +206,11 @@ let search_bar = new (
 
         attach() {
             if (!this.is_attached) {
+                window.addEventListener("resize", update_overlay_size_fn);
+                update_overlay_size_fn(); // Make sure it's the correct size on startup
+                window.addEventListener("resize", redraw_overlay);
+                window.addEventListener("scroll", redraw_overlay);
+                redraw_overlay();
                 this.is_attached = true;
                 this.overlay.classList.add("activated");
                 this.search_box.classList.add("activated");
@@ -244,6 +222,9 @@ let search_bar = new (
 
         detach() {
             if (this.is_attached) {
+                window.removeEventListener("resize", update_overlay_size_fn);
+                window.removeEventListener("resize", redraw_overlay);
+                window.removeEventListener("scroll", redraw_overlay);
                 this.is_attached = false;
                 this.overlay.classList.remove("activated");
                 this.search_box.classList.remove("activated");
@@ -254,15 +235,17 @@ let search_bar = new (
         }
 
         filter_links(search_text) {
-            var frag = document.createDocumentFragment();
             for (let link of document.querySelectorAll("a:not(.kn__copy_element)")) {
-                if (overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) === null) {
+                if (early_exit_fuzzy_match(search_text, link.textContent)) {
+                    const rect = link.getBoundingClientRect();
+                    if (rect.width === 0)
+                        continue;
+                    overlay_list.push(link);
+                } else {
                     overlay_list.destroy_node(link);
-                } else if (!overlay_list.has_node(link) && fuzzy_search(search_text, link.textContent) !== null) {
-                    absolute_element_overlay(link, frag);
                 }
             }
-            search_bar.overlay.appendChild(frag);
+            overlay_list.redraw();
         }
     }
 )();
@@ -293,6 +276,7 @@ document.addEventListener("keydown", function app_state_change(event) {
             app_state = APP_STATE_IDLE;
             search_bar.detach();
             overlay_list.clear();
+            overlay_list.redraw();
             console.log("Going to idle state");
         }
     }
@@ -304,7 +288,7 @@ function test() {
     
     // Demo mode, animate some
     setTimeout(function () {
-        absolute_element_overlay(document.getElementById("first_link"), document.body);
+        overlay_list.push(document.getElementById("first_link"));
         setTimeout(function () {
             overlay_list.clear();
         }, 1000);

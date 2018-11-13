@@ -3,7 +3,7 @@ const assert = require('chai').assert;
 const fs = require('fs');
 // Include the script in the global scope (not using 'module' to be compatible with client-side js)
 eval(fs.readFileSync('src/functions.js')+'');
-/* global fuzzy_search, get_fuzzy_search_string, to_escaped_char_array */
+/* global fuzzy_search, get_fuzzy_search_string, to_escaped_char_array, early_exit_fuzzy_match */
 
 describe('fuzzy_search', function() {
     let search_string;
@@ -67,6 +67,49 @@ describe('fuzzy_search', function() {
             search_result,
             [search_string, '\\', 'can match as well', '\\']
         );
+    });
+});
+
+describe('early_exit_fuzzy_match', function() {
+    let search_string;
+    beforeEach(function() {
+        search_string = "heeej"
+    });
+
+    it('should find word', function() {
+        let match = early_exit_fuzzy_match("hej", search_string);
+        assert.isTrue(match);
+    });
+
+    it('should find first letters of word', function() {
+        let match = early_exit_fuzzy_match("he", search_string);
+        assert.isTrue(match);
+    });
+
+    it('should find letter', function() {
+        let match = early_exit_fuzzy_match("h", search_string);
+        assert.isTrue(match);
+    });
+
+    it('should find case insensitive letter', function() {
+        let match = early_exit_fuzzy_match("H", search_string);
+        assert.isTrue(match);
+    });
+
+    it('should not find word', function() {
+        let match = early_exit_fuzzy_match("hejs", search_string);
+        assert.isFalse(match);
+    });
+
+    it('should not find letter', function() {
+        let match = early_exit_fuzzy_match("s", search_string);
+        assert.isFalse(match);
+    });
+
+    it('should match escaped strings', function() {
+        search_string = "\\can match as well\\";
+        let match = early_exit_fuzzy_match("\\\\", search_string);
+        assert.isTrue(match);
     });
 });
 

@@ -23,6 +23,19 @@ function get_fuzzy_search_string(needle) {
     return needle_re;
 }
 
+function early_exit_fuzzy_match(needle, haystack) {
+    let last_match_index = -1;
+    for (let i=0; i<needle.length; i++) {
+        const index = haystack.indexOf(needle[i], last_match_index+1);
+        if (index > last_match_index) {
+            last_match_index = index;
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
 /**
  * Perform a fuzzy search for a literal string.
  * @param  {str} needle   Literal string to search for

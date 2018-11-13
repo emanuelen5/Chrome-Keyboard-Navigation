@@ -239,7 +239,7 @@ let search_bar = new (
 
         filter_links(search_text) {
             for (let link of document.querySelectorAll("a:not(.kn__copy_element)")) {
-                if (fuzzy_search(search_text, link.textContent) !== null) {
+                if (early_exit_fuzzy_match(search_text, link.textContent)) {
                     const rect = link.getBoundingClientRect();
                     if (rect.width === 0)
                         continue;

@@ -161,6 +161,10 @@ function strip_attribute(element, attribute="id", clone=true) {
 let canvas, ctx;
 let update_overlay_size_fn;
 
+function redraw_overlay() {
+    overlay_list.redraw();
+}
+
 let search_bar = new (
     class SearchBar {
         constructor() {
@@ -189,14 +193,6 @@ let search_bar = new (
                 return fn;
             })(this.overlay);
 
-            window.addEventListener("resize", update_overlay_size_fn);
-            window.addEventListener("resize", function resize_redraw() {
-                overlay_list.redraw();
-            });
-            window.addEventListener("scroll", function scroll_redraw() {
-                overlay_list.redraw();
-            });
-
             let search_box = document.createElement("kn__search_box");
 
             let input = document.createElement("input");
@@ -214,6 +210,10 @@ let search_bar = new (
 
         attach() {
             if (!this.is_attached) {
+                window.addEventListener("resize", update_overlay_size_fn);
+                update_overlay_size_fn(); // Make sure it's the correct size on startup
+                window.addEventListener("resize", redraw_overlay);
+                window.addEventListener("scroll", redraw_overlay);
                 this.is_attached = true;
                 this.overlay.classList.add("activated");
                 this.search_box.classList.add("activated");
@@ -225,6 +225,9 @@ let search_bar = new (
 
         detach() {
             if (this.is_attached) {
+                window.removeEventListener("resize", update_overlay_size_fn);
+                window.removeEventListener("resize", redraw_overlay);
+                window.removeEventListener("scroll", redraw_overlay);
                 this.is_attached = false;
                 this.overlay.classList.remove("activated");
                 this.search_box.classList.remove("activated");
@@ -268,7 +271,6 @@ document.addEventListener("keydown", function app_state_change(event) {
             app_state = APP_STATE_FILTER;
             search_bar.attach();
             overlay_list.clear();
-            update_overlay_size_fn();
             console.log("Going to filter state");
         }
     } else if (app_state === APP_STATE_FILTER) {

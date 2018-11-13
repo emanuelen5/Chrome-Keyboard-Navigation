@@ -91,6 +91,11 @@ describe('early_exit_fuzzy_match', function() {
         assert.isTrue(match);
     });
 
+    it('should find case insensitive letter', function() {
+        let match = early_exit_fuzzy_match("H", search_string);
+        assert.isTrue(match);
+    });
+
     it('should not find word', function() {
         let match = early_exit_fuzzy_match("hejs", search_string);
         assert.isFalse(match);

@@ -16,7 +16,7 @@ kn__overlay {
     left: 0;
     transition: opacity 0.5s ease-in-out;
     opacity: 0.0;
-    pointer-events: none; // Click-through
+    pointer-events: none; /*No click-through*/
     z-index: 16777270;
 }
 
@@ -52,7 +52,7 @@ kn__search_box > input {
 kn__search_box.activated {
     transition: opacity 0.25s ease-in-out;
     opacity: 1;
-    pointer-events: auto; // No click-through
+    pointer-events: auto; /*No click-through*/
 }
 
 kn__search_box.deactivated {

@@ -69,10 +69,10 @@ var overlay_list = new (class OverlayList {
         ctx.fillRect(0,0,canvas.width,canvas.height);
         for (const overlay of this.list) {
             const rect = overlay.element.getBoundingClientRect();
-            let left = Math.round(rect.left);
-            let top = Math.round(rect.top);
-            let width = Math.round(rect.width || overlay.element.offsetWidth);
-            let height = Math.round(rect.height || overlay.element.offsetHeight);
+            let left = rect.left;
+            let top = rect.top;
+            let width = rect.width || overlay.element.offsetWidth;
+            let height = rect.height || overlay.element.offsetHeight;
             ctx.clearRect(left, top, width, height);
         }
     }

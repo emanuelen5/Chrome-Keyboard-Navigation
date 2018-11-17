@@ -1,6 +1,6 @@
 {
 	"background": {
-		"scripts": ["background.js"],
+		"scripts": ["src/background/main.js"],
 		"persistent": false
 	},
 	"name": "Getting started",
@@ -9,11 +9,11 @@
 	"description": "My first extension",
 	"manifest_version": 2,
 	"browser_action": {
-		"default_popup": "hello.html",
+		"default_popup": "src/browser/main.html",
 		"default_tile": "Hello world example"
 	},
 	"icons": {
-		"16": "hello_extensions.png"
+		"16": "src/browser/hello_extensions.png"
 	},
 	"commands": {
 		"_execute_browser_action": {
@@ -40,11 +40,11 @@
 		{
 			"matches": [ "file:///*/testpage.html" ],
 			"run_at": "document_idle",
-			"js": ["src/functions.js", "content.js"],
-			"css": ["content.css"]
+			"js": ["src/helpers/fuzzy_search.js", "src/content/link_coloring.js", "src/content/main.js"],
+			"css": ["src/content/main.css"]
 		}
 	],
 	"options_ui": {
-		"page": "options.html"
+		"page": "src/options/main.html"
 	}
 }

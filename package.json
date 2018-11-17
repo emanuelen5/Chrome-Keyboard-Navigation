@@ -1,10 +1,10 @@
 {
   "name": "keyboard-navigation",
   "version": "0.0.1",
-  "browser": "testpage.html",
+  "browser": "test/testpage.html",
   "scripts": {
     "test": "mocha",
-    "test-js": "mocha test/functions.js"
+    "test-js": "mocha test/helpers"
   },
   "repository": {
     "type": "git",

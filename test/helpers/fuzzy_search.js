@@ -2,7 +2,7 @@ const assert = require('chai').assert;
 
 const fs = require('fs');
 // Include the script in the global scope (not using 'module' to be compatible with client-side js)
-eval(fs.readFileSync('src/functions.js')+'');
+eval(fs.readFileSync('src/helpers/fuzzy_search.js')+'');
 /* global fuzzy_search, get_fuzzy_search_string, to_escaped_char_array, early_exit_fuzzy_match */
 
 describe('fuzzy_search', function() {
